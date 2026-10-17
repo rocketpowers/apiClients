@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import AccessPackages.model.AccessCredentials;
+import AccessPackages.dto.AccessCredentialsRequestDto;
+import AccessPackages.dto.AccessCredentialsResponseDto;
 import AccessPackages.service.AccessCredentialsService;
 
 @RestController
@@ -28,20 +29,22 @@ public class AccessCredentialsController {
 	}
 
 	@PostMapping("/register")
-	public AccessCredentials register(@RequestBody AccessCredentials credentials) {
-		return accessCredentialsService.saveCredentials(credentials);
+	public AccessCredentialsResponseDto register(@RequestBody AccessCredentialsRequestDto dto) {
+		return accessCredentialsService.saveCredentials(dto);
 
 	}
 
 	@GetMapping("/credentials")
-	public List<AccessCredentials> getCredentials() {
+	public List<AccessCredentialsResponseDto> getCredentials() {
 		return accessCredentialsService.getCredentials();
 	}
 
 	@PutMapping("/credentials/{id}")
-	public AccessCredentials updateCredentials(@PathVariable Long id, @RequestBody AccessCredentials credentials) {
-		return accessCredentialsService.updateCredentials(id, credentials);
+	public AccessCredentialsResponseDto updateCredentials(@PathVariable Long id,
+			@RequestBody AccessCredentialsRequestDto dto) {
+		return accessCredentialsService.updateCredentials(id, dto);
 	}
+
 	@DeleteMapping("/credentials/{id}")
 	public String deleteCredentials(@PathVariable Long id) {
 		return accessCredentialsService.deleteCredentials(id);

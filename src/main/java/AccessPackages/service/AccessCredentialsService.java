@@ -1,11 +1,14 @@
 package AccessPackages.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import AccessPackages.dto.AccessCredentialsRequestDto;
+import AccessPackages.dto.AccessCredentialsResponseDto;
 import AccessPackages.model.AccessCredentials;
 import AccessPackages.repository.AccessCredentialsRepository;
 
@@ -19,37 +22,45 @@ public class AccessCredentialsService {
 
 		Optional<AccessCredentials> credential = accessCredentialsRepository.findByLogin(login);
 
-		// return credential.isPresent();
+		return credential.isPresent() && credential.get().getPassword().equals(password);
+	}
+	
 
-		if (credential.isPresent()) {
-			return credential.get().getPassword().equals(password);
+	public AccessCredentialsResponseDto saveCredentials(AccessCredentialsRequestDto dto) {
+		AccessCredentials credentials = new AccessCredentials();
+		credentials.setLogin(dto.getLogin());
+		credentials.setPassword(dto.getPassword());
+
+		AccessCredentials saved = accessCredentialsRepository.save(credentials);
+
+		return new AccessCredentialsResponseDto(saved.getId(), saved.getLogin());
+	}
+
+	public List<AccessCredentialsResponseDto> getCredentials() {
+		List<AccessCredentialsResponseDto> response = new ArrayList<>();
+		for (AccessCredentials credentials : accessCredentialsRepository.findAll()) {
+			response.add(new AccessCredentialsResponseDto(credentials.getId(), credentials.getLogin()));
 		}
-		return false;
-
+		return response;
 	}
 
-	public AccessCredentials saveCredentials(AccessCredentials credentials) {
-		return accessCredentialsRepository.save(credentials);
-	}
-
-	public List<AccessCredentials> getCredentials() {
-		return accessCredentialsRepository.findAll();
-	}
-
-	public AccessCredentials updateCredentials(long id, AccessCredentials newCredentials) {
+	public AccessCredentialsResponseDto updateCredentials(Long id, AccessCredentialsRequestDto dto) {
 
 		Optional<AccessCredentials> credential = accessCredentialsRepository.findById(id);
 
-		if (credential.isPresent()) {
+		if (credential.isEmpty()) {
 
-			AccessCredentials existing = credential.get();
-			existing.setLogin(newCredentials.getLogin());
-			existing.setPassword(newCredentials.getPassword());
+			return null;
 
-			return accessCredentialsRepository.save(existing);
 		}
-		return null;
 
+		AccessCredentials existing = credential.get();
+		existing.setLogin(dto.getLogin());
+		existing.setPassword(dto.getPassword());
+
+		AccessCredentials updated = accessCredentialsRepository.save(existing);
+
+		return new AccessCredentialsResponseDto(updated.getId(), updated.getLogin());
 	}
 
 	public String deleteCredentials(Long id) {

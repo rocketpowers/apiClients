@@ -8,24 +8,12 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccessCredentials {
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
 
 	public String getLogin() {
 		return login;
@@ -35,18 +23,32 @@ public class AccessCredentials {
 		this.login = login;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@NotBlank
 	@Column(unique = true)
 	private String login;
-	
-	@NotBlank
-	@Size(min=4, max=20, message ="minimum 8 and maximum 20")
-	private String password;
 
-	
+	@NotBlank
+	@Size(min = 4, max = 20, message = "minimum 8 and maximum 20")
+	private String password;
 
 }
